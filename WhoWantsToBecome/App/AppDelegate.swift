@@ -1,10 +1,3 @@
-//
-//  AppDelegate.swift
-//  WhoWantsToBecome
-//
-//  Created by Мария Александрова on 09.04.2026.
-//
-
 import UIKit
 
 @main
