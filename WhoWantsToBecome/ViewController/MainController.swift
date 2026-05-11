@@ -2,17 +2,14 @@ import UIKit
 
 class MainController: UIViewController {
 
-    private lazy var mainView: MainView = {
-        let mainView = MainView(delegate: self)
-        return mainView
-    }()
+    private lazy var mainView = MainView(delegate: self)
     
     private let questions = DataStore().questions
     
-    var currentIndex: Int = 0
-    var bank: Int = 0
+    private var currentIndex: Int = 0
+    private var bank: Int = 0
     
-    var notFireBankLabel: String {
+    private var notFireBankLabel: String {
         switch bank {
             case 1000...1999 : "1 000"
             case 2000...2999 : "2 000"
@@ -25,16 +22,17 @@ class MainController: UIViewController {
     override func loadView() {
         view = mainView
     }
-    
-    func setupUI() {
-        mainView.configure(with: questions[currentIndex], bank: bank,  notFireSumViewLabel: notFireBankLabel, currentIndex: currentIndex)
-    }
 
     override func viewDidLoad() {
+        super.viewDidLoad()
         setupUI()
     }
     
-    func showAlertTrue() {
+    private func setupUI() {
+        mainView.configure(with: questions[currentIndex], bank: bank,  notFireSumViewLabel: notFireBankLabel, currentIndex: currentIndex)
+    }
+    
+    private func showAlertTrue() {
         let isFinishAnswer = currentIndex == questions.count - 1
         let title = isFinishAnswer
         ? "Поздравляем! Вы стали миллионером!"
@@ -59,7 +57,7 @@ class MainController: UIViewController {
         self.present(alert, animated: true)
     }
     
-    func showAlertFalse() {
+    private func showAlertFalse() {
         
         let alert = UIAlertController(title: "Ответ неверный",
                                       message: "Ваша сумма: \(notFireBankLabel)",
@@ -130,4 +128,3 @@ extension MainController: MainViewDelegateProtocol {
         self.present(alert, animated: true)
     }
 }
-
