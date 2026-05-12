@@ -1,40 +1,34 @@
 import UIKit
 
-class MainController: UIViewController {
+final class MainController: UIViewController {
 
-    private lazy var mainView: MainView = {
-        let mainView = MainView(delegate: self)
-        return mainView
-    }()
+    private lazy var mainView = MainView(delegate: self)
     
     private let questions = DataStore().questions
+    private var currentIndex: Int = 0
+    private var bank: Int = 0
     
-    var currentIndex: Int = 0
-    var bank: Int = 0
-    
-    var notFireBankLabel: String {
-        switch bank {
-            case 1000...1999 : "1 000"
-            case 2000...2999 : "2 000"
-            case 3000...3999 : "3 000"
-            case 4000...4999 : "4 000"
-            default: "0"
-        }
+    private var notFireBankLabel: String {
+        "\(bank / 1000)" + (bank >= 1000 ? " 000" : "")
     }
     
     override func loadView() {
         view = mainView
     }
-    
-    func setupUI() {
-        mainView.configure(with: questions[currentIndex], bank: bank,  notFireSumViewLabel: notFireBankLabel, currentIndex: currentIndex)
-    }
 
     override func viewDidLoad() {
+        super.viewDidLoad()
         setupUI()
     }
     
-    func showAlertTrue() {
+    private func setupUI() {
+        mainView.configure(with: questions[currentIndex],
+                           bank: bank,
+                           notFireSumViewLabel: notFireBankLabel,
+                           currentIndex: currentIndex)
+    }
+    
+    private func showAlertTrue() {
         let isFinishAnswer = currentIndex == questions.count - 1
         let title = isFinishAnswer
         ? "Поздравляем! Вы стали миллионером!"
@@ -50,6 +44,7 @@ class MainController: UIViewController {
             if isFinishAnswer {
                 self.bank = 0
                 self.currentIndex = 0
+                self.mainView.resetHint()
             } else {
                 self.currentIndex += 1
             }
@@ -59,8 +54,7 @@ class MainController: UIViewController {
         self.present(alert, animated: true)
     }
     
-    func showAlertFalse() {
-        
+    private func showAlertFalse() {
         let alert = UIAlertController(title: "Ответ неверный",
                                       message: "Ваша сумма: \(notFireBankLabel)",
                                       preferredStyle: .alert)
@@ -69,6 +63,7 @@ class MainController: UIViewController {
             self.bank = 0
             self.currentIndex = 0
             self.setupUI()
+            self.mainView.resetHint()
         }
         alert.addAction(newStartAction)
         alert.addAction(okAction)
@@ -130,4 +125,3 @@ extension MainController: MainViewDelegateProtocol {
         self.present(alert, animated: true)
     }
 }
-

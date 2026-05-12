@@ -1,7 +1,6 @@
 import UIKit
 
 extension UIButton {
-    
     convenience init(text: String, tag: Int) {
         self.init(frame: .zero)
         self.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
@@ -9,10 +8,8 @@ extension UIButton {
         self.tag = tag
         self.backgroundColor = .systemCyan
         self.setTitleColor(.black, for: .normal)
-//        self.heightAnchor.constraint(equalToConstant: 60).isActive = true
         self.layer.masksToBounds = true
     }
-    //
     
     convenience init(icon: String) {
         self.init(frame: .zero)
@@ -20,8 +17,6 @@ extension UIButton {
         self.backgroundColor = .systemCyan
         self.tintColor = .black
         self.layer.cornerRadius = 40
-        self.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        self.widthAnchor.constraint(equalToConstant: 80).isActive = true
         self.layer.masksToBounds = true        
     }
 }

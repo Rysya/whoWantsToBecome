@@ -7,57 +7,43 @@ protocol MainViewDelegateProtocol: AnyObject {
     func tapHintThree()
 }
 
-class MainView: UIView {
+final class MainView: UIView {
     
-    private let dataStore = DataStore()
-    weak var delegate: MainViewDelegateProtocol?
+    private weak var delegate: MainViewDelegateProtocol?
     
-    let titleQuestionLabel = UILabel(text: "Кто хочет стать миллионером?", size: 32, weight: .bold)
-    let costQuestionLabel = UILabel(text: "Стоимость вопроса:\n 100 монет", size: 20, weight: .regular)
+    private let titleQuestionLabel = UILabel(text: "Кто хочет стать миллионером?", size: 32, weight: .bold)
+    private let costQuestionLabel = UILabel(text: "Стоимость вопроса:\n 100 монет", size: 20, weight: .regular)
+    private let bankLabel = UILabel(text: "Банк: 2 000₽", size: 20, weight: .regular)
     
-    lazy var bankView: UIView = {
-        let bankLabel = UILabel(text: "Банк: 2 000₽", size: 20, weight: .regular)
-        let view = UIView()
-        view.addSubviews([bankLabel])
-        view.backgroundColor = .systemCyan
-        bankLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        bankLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 130).isActive = true
-        view.heightAnchor.constraint(equalToConstant: 46).isActive = true
-        return view
+    private let bankView: UIView = {
+        let bankView = UIView()
+        bankView.backgroundColor = .systemCyan
+        return bankView
     }()
     
-    lazy var notFireSumView: UIView = {
+    private let notFireSumLabel: UILabel = {
         let notFireSumLabel = UILabel(text: "Несгораемая сумма:\n  0 ₽", size: 20, weight: .regular)
         notFireSumLabel.numberOfLines = 2
         notFireSumLabel.textAlignment = .right
-        let view = UIView()
-        view.addSubviews([notFireSumLabel])
-        notFireSumLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        notFireSumLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        view.backgroundColor = .systemCyan
-        view.widthAnchor.constraint(equalToConstant: 210).isActive = true
-        view.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        return view
+        return notFireSumLabel
     }()
     
-    lazy var numberQuestionView: UIView = {
-        let number = UILabel(text: "1", size: 70, weight: .bold)
-        let numberLabel = UILabel(text: "вопрос", size: 20, weight: .regular)
-        let view = UIView()
-        view.addSubviews([number, numberLabel])
-        number.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        number.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20).isActive = true
-        numberLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        numberLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20).isActive = true
-        view.backgroundColor = .systemCyan
-        view.widthAnchor.constraint(equalToConstant: 130).isActive = true
-        view.heightAnchor.constraint(equalToConstant: 130).isActive = true
-        view.layer.cornerRadius = 65
-        view.layer.masksToBounds = true
-        return view
+    private let notFireSumView: UIView = {
+        let notFireSumView = UIView()
+        notFireSumView.backgroundColor = .systemCyan
+        return notFireSumView
     }()
     
+    private let number = UILabel(text: "1", size: 70, weight: .bold)
+    private let numberLabel = UILabel(text: "вопрос", size: 20, weight: .regular)
+    
+    private let numberQuestionView: UIView = {
+        let numberQuestionView = UIView()
+        numberQuestionView.backgroundColor = .systemCyan
+        numberQuestionView.layer.cornerRadius = 65
+        numberQuestionView.layer.masksToBounds = true
+        return numberQuestionView
+    }()
     
     private lazy var answerOne: UIButton = {
         let answerOne = UIButton(text: "ответ 1", tag: 0)
@@ -82,40 +68,51 @@ class MainView: UIView {
         answerFour.addTarget(self, action: #selector(answerTapped(_:)), for: .touchUpInside)
         return answerFour
     }()
-        
+    
     private lazy var hintOne: UIButton = {
         let hintOne = UIButton(icon: "phone")
         hintOne.addTarget(self, action: #selector(hintOneTapped(_:)), for: .touchUpInside)
+        hintOne.translatesAutoresizingMaskIntoConstraints = false
         return hintOne
     }()
     
     private lazy var hintTwo: UIButton = {
         let hintTwo = UIButton(icon: "percent")
         hintTwo.addTarget(self, action: #selector(hintTwoTapped(_:)), for: .touchUpInside)
+        hintTwo.translatesAutoresizingMaskIntoConstraints = false
         return hintTwo
     }()
-    
+        
     private lazy var hintThree: UIButton = {
         let hintThree = UIButton(icon: "person.3")
         hintThree.addTarget(self, action: #selector(hintThreeTapped(_:)), for: .touchUpInside)
+        hintThree.translatesAutoresizingMaskIntoConstraints = false
         return hintThree
     }()
     
-    lazy var answerButtons = UIStackView(views: [answerOne, answerTwo, answerThree, answerFour], axis: .vertical, spacing: 12, aligment: .fill)
-    
-    lazy var hints: UIStackView = {
-        let stack = UIStackView(views: [hintOne, hintTwo, hintThree], axis: .horizontal, spacing: 0, aligment: .fill)
-        stack.distribution = .equalSpacing
-        return stack
+    private lazy var answerButtons: UIStackView = {
+        let answerButtons = UIStackView(arrangedSubviews: [
+            answerOne,
+            answerTwo,
+            answerThree,
+            answerFour
+        ])
+        answerButtons.axis = .vertical
+        answerButtons.spacing = 12
+        answerButtons.alignment = .fill
+        answerButtons.distribution = .fillEqually
+        return answerButtons
     }()
     
-    private lazy var answerOneHeight = answerOne.heightAnchor.constraint(equalToConstant: 60)
-    private lazy var answerTwoHeight = answerTwo.heightAnchor.constraint(equalToConstant: 60)
-    private lazy var answerThreeHeight = answerThree.heightAnchor.constraint(equalToConstant: 60)
-    private lazy var answerFourHeight = answerFour.heightAnchor.constraint(equalToConstant: 60)
-    private lazy var buttunsAnswersHeight = [
-        answerOneHeight, answerTwoHeight, answerThreeHeight, answerFourHeight,
-    ]
+    private lazy var hints: UIStackView = {
+        let hints = UIStackView(arrangedSubviews: [
+            hintOne, hintTwo, hintThree
+        ])
+        hints.axis = .horizontal
+        
+        hints.distribution = .equalSpacing
+        return hints
+    }()
     
     init(delegate: MainViewDelegateProtocol) {
         super.init(frame: CGRect())
@@ -129,8 +126,17 @@ class MainView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupUI(){
-        addSubviews([bankView, notFireSumView, titleQuestionLabel, numberQuestionView, costQuestionLabel, hints, answerButtons])
+    private func setupUI() {
+        addSubviews([bankView,
+                     notFireSumView,
+                     titleQuestionLabel,
+                     numberQuestionView,
+                     costQuestionLabel,
+                     hints,
+                     answerButtons])
+        bankView.addSubviews([bankLabel])
+        notFireSumView.addSubviews([notFireSumLabel])
+        numberQuestionView.addSubviews([number, numberLabel])
     }
     
     func configure(with question: Question, bank: Int, notFireSumViewLabel: String, currentIndex: Int) {
@@ -139,7 +145,6 @@ class MainView: UIView {
                 label.text = "Банк: \(bank)₽"
             }
         }
-      
         notFireSumView.subviews.forEach { view in
             if let label = view as? UILabel {
                 label.text = "Несгораемая сумма:\n " + notFireSumViewLabel + "  ₽"
@@ -148,7 +153,6 @@ class MainView: UIView {
         if let number = numberQuestionView.subviews[0] as? UILabel {
             number.text = "\(currentIndex + 1)"
         }
-        
         titleQuestionLabel.text = question.title
         costQuestionLabel.text = "Стоимость вопроса:\n \(question.costQuestion) монет"
         
@@ -156,7 +160,9 @@ class MainView: UIView {
         answerTwo.setTitle(question.answers[1], for: .normal)
         answerThree.setTitle(question.answers[2], for: .normal)
         answerFour.setTitle(question.answers[3], for: .normal)
-        hideAnswers(setAnswersForHidn: [0, 1, 2, 3], isHidden: false)
+        if !hintTwo.isEnabled {
+            hideAnswers(setAnswersForHidn: [0, 1, 2, 3], isHidden: false)
+        }
     }
     
     @objc private func answerTapped(_ sender: UIButton) {
@@ -180,7 +186,7 @@ class MainView: UIView {
         sender.isEnabled = false
         sender.alpha = 0.5
     }
-        
+    
     func hideAnswers(setAnswersForHidn: Set<Int>, isHidden: Bool = true) {
         var setAnswersForBigger: Set<Int> = [0, 1, 2, 3]
         let buttunsAnswers = [
@@ -192,49 +198,66 @@ class MainView: UIView {
         if isHidden {
             setAnswersForBigger = setAnswersForBigger.subtracting(setAnswersForHidn)
         }
-        setAnswersForHidn.forEach { buttunsAnswers[$0].isHidden = isHidden }
-        setAnswersForBigger.forEach {
-            self.buttunsAnswersHeight[$0].isActive = false
-            self.buttunsAnswersHeight[$0].constant = isHidden ? 132 : 60
-        }
         UIView.animate(withDuration: 0.3) {
-            setAnswersForBigger.forEach { self.buttunsAnswersHeight[$0].isActive = true }
-            self.setNeedsLayout()
-            self.layoutIfNeeded()
+            setAnswersForHidn.forEach { buttunsAnswers[$0].isHidden = isHidden }
         }
     }
     
-    private func setupConstraints(){
-        
+    func resetHint() {
+        hintOne.isEnabled = true
+        hintOne.alpha = 1
+        hintTwo.isEnabled = true
+        hintTwo.alpha = 1
+        hintThree.isEnabled = true
+        hintThree.alpha = 1
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
+            bankLabel.centerYAnchor.constraint(equalTo: bankView.centerYAnchor),
+            bankLabel.centerXAnchor.constraint(equalTo: bankView.centerXAnchor),
             bankView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            bankView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            bankView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            bankView.widthAnchor.constraint(equalToConstant: 130),
+            bankView.heightAnchor.constraint(equalToConstant: 46),
             
+            notFireSumLabel.centerYAnchor.constraint(equalTo: notFireSumView.centerYAnchor),
+            notFireSumLabel.centerXAnchor.constraint(equalTo: notFireSumView.centerXAnchor),
             notFireSumView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            notFireSumView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            notFireSumView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            notFireSumView.widthAnchor.constraint(equalToConstant: 210),
+            notFireSumView.heightAnchor.constraint(equalToConstant: 60),
             
-            titleQuestionLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             titleQuestionLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -100),
-            titleQuestionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            titleQuestionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            titleQuestionLabel.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor),
             
+            number.centerXAnchor.constraint(equalTo: numberQuestionView.centerXAnchor),
+            number.centerYAnchor.constraint(equalTo: numberQuestionView.centerYAnchor, constant: -20),
+            numberLabel.centerXAnchor.constraint(equalTo: numberQuestionView.centerXAnchor),
+            numberLabel.bottomAnchor.constraint(equalTo: numberQuestionView.bottomAnchor, constant: -20),
+            numberQuestionView.widthAnchor.constraint(equalToConstant: 130),
+            numberQuestionView.heightAnchor.constraint(equalToConstant: 130),
             numberQuestionView.bottomAnchor.constraint(equalTo: titleQuestionLabel.topAnchor, constant: -30),
             numberQuestionView.centerXAnchor.constraint(equalTo: centerXAnchor),
             
             costQuestionLabel.topAnchor.constraint(equalTo: titleQuestionLabel.bottomAnchor, constant: 30),
             costQuestionLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-            costQuestionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            costQuestionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             
-            hints.bottomAnchor.constraint(equalTo: answerButtons.topAnchor, constant: -20),
+            hintOne.heightAnchor.constraint(equalToConstant: 80),
+            hintOne.widthAnchor.constraint(equalTo: hintOne.heightAnchor),
+            hintTwo.heightAnchor.constraint(equalToConstant: 80),
+            hintTwo.widthAnchor.constraint(equalTo: hintTwo.heightAnchor),
+            hintThree.heightAnchor.constraint(equalToConstant: 80),
+            hintThree.widthAnchor.constraint(equalTo: hintThree.heightAnchor),
+            
+            hints.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: 60),
             hints.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             hints.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             
-            answerOneHeight, answerTwoHeight, answerThreeHeight, answerFourHeight,
-            
+            answerButtons.topAnchor.constraint(equalTo: hints.bottomAnchor, constant: 20),
             answerButtons.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
-            answerButtons.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            answerButtons.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
+            answerButtons.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            answerButtons.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20)
         ])
     }
 }
