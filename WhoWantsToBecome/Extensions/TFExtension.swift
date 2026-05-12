@@ -1,7 +1,6 @@
 import UIKit
 
 extension UITextField {
-    
     convenience init(placeholder: String) {
         self.init(frame: CGRect())
         self.placeholder = placeholder

@@ -1,7 +1,6 @@
 import UIKit
 
 extension UILabel {
-    
     convenience init(text: String, size: CGFloat, weight: UIFont.Weight) {
         self.init(frame: .zero)
         self.text = text

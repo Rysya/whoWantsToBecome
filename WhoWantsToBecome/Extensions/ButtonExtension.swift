@@ -1,7 +1,6 @@
 import UIKit
 
 extension UIButton {
-    
     convenience init(text: String, tag: Int) {
         self.init(frame: .zero)
         self.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)

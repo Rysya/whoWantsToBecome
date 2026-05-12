@@ -44,6 +44,7 @@ final class MainController: UIViewController {
             if isFinishAnswer {
                 self.bank = 0
                 self.currentIndex = 0
+                self.mainView.resetHint()
             } else {
                 self.currentIndex += 1
             }
