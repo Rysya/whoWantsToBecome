@@ -9,14 +9,13 @@ protocol MainViewDelegateProtocol: AnyObject {
 
 final class MainView: UIView {
     
-    weak var delegate: MainViewDelegateProtocol?
+    private weak var delegate: MainViewDelegateProtocol?
     
     private let titleQuestionLabel = UILabel(text: "Кто хочет стать миллионером?", size: 32, weight: .bold)
-    
     private let costQuestionLabel = UILabel(text: "Стоимость вопроса:\n 100 монет", size: 20, weight: .regular)
-    
     private let bankLabel = UILabel(text: "Банк: 2 000₽", size: 20, weight: .regular)
-    private var bankView: UIView = {
+    
+    private let bankView: UIView = {
         let bankView = UIView()
         bankView.backgroundColor = .systemCyan
         return bankView
@@ -28,7 +27,8 @@ final class MainView: UIView {
         notFireSumLabel.textAlignment = .right
         return notFireSumLabel
     }()
-    private var notFireSumView: UIView = {
+    
+    private let notFireSumView: UIView = {
         let notFireSumView = UIView()
         notFireSumView.backgroundColor = .systemCyan
         return notFireSumView
@@ -36,14 +36,14 @@ final class MainView: UIView {
     
     private let number = UILabel(text: "1", size: 70, weight: .bold)
     private let numberLabel = UILabel(text: "вопрос", size: 20, weight: .regular)
-    private var numberQuestionView: UIView = {
+    
+    private let numberQuestionView: UIView = {
         let numberQuestionView = UIView()
         numberQuestionView.backgroundColor = .systemCyan
         numberQuestionView.layer.cornerRadius = 65
         numberQuestionView.layer.masksToBounds = true
         return numberQuestionView
     }()
-    
     
     private lazy var answerOne: UIButton = {
         let answerOne = UIButton(text: "ответ 1", tag: 0)
@@ -82,9 +82,7 @@ final class MainView: UIView {
         hintTwo.translatesAutoresizingMaskIntoConstraints = false
         return hintTwo
     }()
-    
-    private var hintTwoOn = 0
-    
+        
     private lazy var hintThree: UIButton = {
         let hintThree = UIButton(icon: "person.3")
         hintThree.addTarget(self, action: #selector(hintThreeTapped(_:)), for: .touchUpInside)
@@ -162,7 +160,7 @@ final class MainView: UIView {
         answerTwo.setTitle(question.answers[1], for: .normal)
         answerThree.setTitle(question.answers[2], for: .normal)
         answerFour.setTitle(question.answers[3], for: .normal)
-        if !hintTwo.isEnabled, hintTwoOn < 2 {
+        if !hintTwo.isEnabled {
             hideAnswers(setAnswersForHidn: [0, 1, 2, 3], isHidden: false)
         }
     }
@@ -190,10 +188,6 @@ final class MainView: UIView {
     }
     
     func hideAnswers(setAnswersForHidn: Set<Int>, isHidden: Bool = true) {
-        guard hintTwoOn < 2 else { return }
-        if hintTwoOn == 1 {
-            hintTwoOn += 1
-        }
         var setAnswersForBigger: Set<Int> = [0, 1, 2, 3]
         let buttunsAnswers = [
             answerOne,
@@ -203,18 +197,23 @@ final class MainView: UIView {
         ]
         if isHidden {
             setAnswersForBigger = setAnswersForBigger.subtracting(setAnswersForHidn)
-            hintTwoOn += 1
         }
         UIView.animate(withDuration: 0.3) {
-            print("animate true \(self.hintTwoOn)")
             setAnswersForHidn.forEach { buttunsAnswers[$0].isHidden = isHidden }
         }
     }
     
-    private func setupConstraints(){
-        
+    func resetHint() {
+        hintOne.isEnabled = true
+        hintOne.alpha = 1
+        hintTwo.isEnabled = true
+        hintTwo.alpha = 1
+        hintThree.isEnabled = true
+        hintThree.alpha = 1
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
-            
             bankLabel.centerYAnchor.constraint(equalTo: bankView.centerYAnchor),
             bankLabel.centerXAnchor.constraint(equalTo: bankView.centerXAnchor),
             bankView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
